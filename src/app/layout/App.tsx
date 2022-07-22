@@ -1,33 +1,46 @@
-import { CssBaseline } from '@mui/material';
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { Container } from '@mui/system';
-import { useState, useEffect, Fragment } from 'react';
+import { Fragment, useState } from 'react';
+import { Route, Routes } from 'react-router';
+import AboutPage from '../../features/about/AboutPage';
 import Catalog from '../../features/catalog/Catalog';
-import { Product } from '../models/product';
+import ProductDetails from '../../features/catalog/ProductDetails';
+import ContactPage from '../../features/contact/ContactPage';
+import HomePage from '../../features/home/HomePage';
 import Header from './Header';
 
 function App() {
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const paletteType = darkMode ? 'dark' : 'light';
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const theme = createTheme({
+    palette: {
+      mode: paletteType,
+      background: {
+        default: darkMode ? '#121212' : '#eaeaea'
+      }
+    }
+  });
 
-  useEffect(() => {
-    fetch('http://localhost:8080/commerce/api/products')
-      .then(response => response.json())
-      .then(data => setProducts(data))
-  }, []);
-
-  function addProduct() {
-  //   setProducts(prevState => [...prevState,
-  //     {name: 'product' + (prevState.length + 1), price: (prevState.length * 100) + 100}
-  //   ]);
+  function handleThemeChange() {
+    setDarkMode(!darkMode);
   }
 
   return (
     <Fragment>
-        <CssBaseline/>
-        <Header/>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
         <Container>
-          <Catalog products={products} addProduct={addProduct}/>
+          <Routes>
+            <Route path='/' element= { <HomePage /> } />
+            <Route path='/catalog' element= { <Catalog /> } />
+            <Route path='/catalog/:id' element= { <ProductDetails /> } />
+            <Route path='/about' element= { <AboutPage /> } />
+            <Route path='/contact' element= { <ContactPage /> } />
+          </Routes>
         </Container>
+      </ThemeProvider>
     </Fragment>
   );
 }
