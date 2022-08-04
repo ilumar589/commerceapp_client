@@ -1,6 +1,6 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { Container } from '@mui/system';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import AboutPage from '../../features/about/AboutPage';
@@ -11,8 +11,21 @@ import HomePage from '../../features/home/HomePage';
 import Header from './Header';
 import 'react-toastify/dist/ReactToastify.css'
 import BasketPage from '../../features/basket/BasketPage';
+import { useStoreContext } from '../context/StoreContext';
+import agent from '../api/agent';
 
 function App() {
+
+  const { setBasket } = useStoreContext();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    agent.Basket.get()
+      .then(basket => setBasket(basket))
+      .catch(error => console.log(error))
+      .finally(() => setLoading(false));
+  }, [setBasket]);
+
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const paletteType = darkMode ? 'dark' : 'light';
 
@@ -28,6 +41,8 @@ function App() {
   function handleThemeChange() {
     setDarkMode(!darkMode);
   }
+
+  if (loading) return (<h1> Loading... </h1>)
 
   return (
     <Fragment>

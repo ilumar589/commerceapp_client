@@ -9,5 +9,5 @@ export interface BasketItem {
 export interface Basket {
     id: string,
     buyerId: string,
-    basketItems: BasketItem[]
+    items: BasketItem[]
 }
