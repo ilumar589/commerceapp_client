@@ -10,6 +10,7 @@ import ContactPage from '../../features/contact/ContactPage';
 import HomePage from '../../features/home/HomePage';
 import Header from './Header';
 import 'react-toastify/dist/ReactToastify.css'
+import BasketPage from '../../features/basket/BasketPage';
 
 function App() {
   const [darkMode, setDarkMode] = useState<boolean>(false);
@@ -41,6 +42,7 @@ function App() {
             <Route path='/catalog/:id' element= { <ProductDetails /> } />
             <Route path='/about' element= { <AboutPage /> } />
             <Route path='/contact' element= { <ContactPage /> } />
+            <Route path='/basket' element= { <BasketPage /> } />
           </Routes>
         </Container>
       </ThemeProvider>

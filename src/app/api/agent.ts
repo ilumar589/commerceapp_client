@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 
 axios.defaults.baseURL = 'http://localhost:8080/commerce/api/';
+axios.defaults.withCredentials = true;
 
 axios.interceptors.response.use(response => {
     return response;
@@ -26,16 +27,23 @@ const requests = {
     get: (url: string) => axios.get(url).then(responseBody),
     post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
     put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
-    delete: (url: string) => axios.delete(url).then(responseBody),
+    delete: (url: string, body: {}) => axios.delete(url, body).then(responseBody),
 };
 
 const Catalog = {
     list: () => requests.get('catalog/products'),
-    details: (id: number) => requests.get(`catalog/product/${id}`)
+    details: (id: string) => requests.get(`catalog/product/${id}`)
+}
+
+const Basket = {
+    get: () => requests.get('basket'),
+    addItem: (productId: string, quantity: number = 1) => requests.post('basket', { productId, quantity }),
+    removeItem: (productId: string, quantity: number = 1) => requests.delete('basket', { productId, quantity }),
 }
 
 const agent = {
-    Catalog
+    Catalog,
+    Basket
 };
 
 export default agent;
