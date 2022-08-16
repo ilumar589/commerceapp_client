@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import BasketPage from '../../features/basket/BasketPage';
 import { useStoreContext } from '../context/StoreContext';
 import agent from '../api/agent';
+import CheckoutPage from '../../features/checkout/CheckoutPage';
 
 function App() {
 
@@ -58,6 +59,7 @@ function App() {
             <Route path='/about' element= { <AboutPage /> } />
             <Route path='/contact' element= { <ContactPage /> } />
             <Route path='/basket' element= { <BasketPage /> } />
+            <Route path='/checkout' element= { <CheckoutPage/> } />
           </Routes>
         </Container>
       </ThemeProvider>

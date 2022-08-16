@@ -65,7 +65,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
 
                 <Box display='flex' alignItems='center'>
                     <IconButton component={Link} to='/basket' size="large" sx={{ color: 'inherit' }}>
-                        <Badge badgeContent={basket?.items.length} color='secondary'>
+                        <Badge badgeContent={basket?.items.reduce((sum, item) => sum + item.quantity, 0)} color='secondary'>
                             <ShoppingCart />
                         </Badge>
                     </IconButton>
