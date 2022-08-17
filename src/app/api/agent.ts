@@ -31,7 +31,7 @@ const requests = {
 };
 
 const Catalog = {
-    list: () => requests.get('catalog/products'),
+    list: () => requests.post('catalog/products',{}),
     details: (id: string) => requests.get(`catalog/product/${id}`)
 }
 
