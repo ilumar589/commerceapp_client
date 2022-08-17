@@ -2,9 +2,8 @@ import { Add, Delete, Remove } from "@mui/icons-material";
 import { Box, Button, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
-import agent from "../../app/api/agent";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
-import { setBasket } from "./basketSlice";
+import { addBasketItemAsync, removeBasketItemAsync } from "./basketSlice";
 import BasketSummary from "./BasketSummary";
 
 export default function BasketPage() {
@@ -15,15 +14,11 @@ export default function BasketPage() {
     if (!basket) return <Typography variant='h3'>Your basket is empty</Typography>
 
     function addItemQuantity(productId: string, quantity: number = 1) {
-        agent.Basket.addItem(productId, quantity)
-            .then(changedBasket => dispatch(setBasket(changedBasket)))
-            .catch(error => console.log(error))
+        dispatch(addBasketItemAsync({productId, quantity}));
     }
 
     function removeItemQuantity(productId: string, quantity: number = 1) {
-        agent.Basket.removeItem(productId, quantity)
-            .then(changedBasket => dispatch(setBasket(changedBasket)))
-            .catch(error => console.log(error))
+        dispatch(removeBasketItemAsync({productId, quantity}));
     }
 
     return (

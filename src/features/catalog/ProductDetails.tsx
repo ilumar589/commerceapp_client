@@ -5,16 +5,15 @@ import { useParams } from "react-router";
 import agent from "../../app/api/agent";
 import { Product } from "../../app/models/product";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
-import { setBasket } from "../basket/basketSlice";
+import { addBasketItemAsync, removeBasketItemAsync } from "../basket/basketSlice";
 
 export default function ProductDetails() {
     const dispatch = useAppDispatch();
-    const { basket } = useAppSelector(state => state.basket);
+    const { basket, status } = useAppSelector(state => state.basket);
     const { id } = useParams<{ id: string }>();
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [quantity, setQuantity] = useState<number>(0);
-    const [submitted, setSubmitted] = useState<boolean>(false);
     const item = basket?.items.find(item => item.product.id === product?.id);
 
     function handleInputChange(event: any) {
@@ -24,19 +23,12 @@ export default function ProductDetails() {
     }
 
     function handleUpdateCart() {
-        setSubmitted(true);
         if (!item || quantity > item.quantity) {
             const updatedQuantity = item ? quantity - item.quantity : quantity;
-            agent.Basket.addItem(product?.id!, updatedQuantity)
-                .then(basket => dispatch(setBasket(basket)))
-                .catch(error => console.log(error))
-                .finally(() => setSubmitted(false));
+            dispatch(addBasketItemAsync({productId: product?.id!, quantity: updatedQuantity}));
         } else {
             const updatedQuantity = item.quantity - quantity;
-            agent.Basket.removeItem(product?.id!, updatedQuantity)
-                .then(basket => dispatch(setBasket(basket)))
-                .catch(error => console.log(error))
-                .finally(() => setSubmitted(false));
+            dispatch(removeBasketItemAsync({productId: product?.id!, quantity: updatedQuantity}));
         }
     }
 
@@ -106,7 +98,7 @@ export default function ProductDetails() {
                             size='large'
                             variant='contained'
                             fullWidth
-                            loading={submitted}
+                            loading={status === 'pendingRemoveItem' + item?.product.id}
                             onClick={handleUpdateCart}
                         >
                             {item ? "Update Quantity": "Add to Cart"}
