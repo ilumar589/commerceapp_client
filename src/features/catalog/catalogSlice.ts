@@ -1,6 +1,7 @@
+import { StaticDatePicker } from "@mui/lab";
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import agent from "../../app/api/agent";
-import { PagedProducts, Product, ProductFilterOptions, ProductSearchBodyParams, ProductSearchParams, toProductSearchBodyPams } from "../../app/models/product";
+import { PagedProducts, PageMetadata, Product, ProductFilterOptions, ProductSearchBodyParams, ProductSearchParams, toProductSearchBodyPams } from "../../app/models/product";
 import { RootState } from "../../app/store/configureStore";
 
 const productAdapter = createEntityAdapter<Product>();
@@ -57,7 +58,8 @@ interface ProductState {
     filtersLoaded: boolean,
     types: string[],
     brands: string[],
-    productParams: ProductSearchParams
+    productParams: ProductSearchParams,
+    pagedMetadata: PageMetadata | null
 };
 
 const extraInitialState: ProductState = {
@@ -72,19 +74,26 @@ const extraInitialState: ProductState = {
         orderBy: "name",
         types: [],
         brands: []
-    }
+    },
+    pagedMetadata: null
 }
 
 export const catalogSlice = createSlice({
     name: 'catalog',
     initialState: productAdapter.getInitialState<ProductState>(extraInitialState),
     reducers: {
+        setPagedMetadata: (state, action) => {
+            state.pagedMetadata = action.payload;
+        },
+        setPageNumber: (state, action) => {
+            state.productParams = {...state.productParams, page: action.payload};
+            state.productsLoaded = false;
+        },
         setProductSearchParams: (state, action) => {
             state.productsLoaded = false;
-            state.productParams = {...state.productParams, ...action.payload}
+            state.productParams = {...state.productParams, ...action.payload, page: 0}
         },
         resetProductSearchParams: (state, action) => {
-            state.productsLoaded = false;
             state.productParams = {
                 page: 0,
                 size: 6,
@@ -92,6 +101,7 @@ export const catalogSlice = createSlice({
                 types: [],
                 brands: []
             };
+            state.productsLoaded = false;
         }
     },
     extraReducers: (builder => {
@@ -100,6 +110,13 @@ export const catalogSlice = createSlice({
         });
         builder.addCase(fetchProductsAsync.fulfilled, (state, action) => {
             productAdapter.setAll(state, action.payload.content);
+            state.pagedMetadata = {
+                number: action.payload.number,
+                numberOfElements: action.payload.numberOfElements,
+                size: action.payload.size,
+                totalElements: action.payload.totalElements,
+                totalPages: action.payload.totalPages
+            };
             state.status = 'idle';
             state.productsLoaded = true;
         });
@@ -129,4 +146,4 @@ export const catalogSlice = createSlice({
 })
 
 export const productSelectors = productAdapter.getSelectors((state: RootState) => state.catalog);
-export const { setProductSearchParams, resetProductSearchParams } = catalogSlice.actions;
+export const { setPagedMetadata, setProductSearchParams, resetProductSearchParams, setPageNumber } = catalogSlice.actions;

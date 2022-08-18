@@ -9,19 +9,27 @@ export interface Product {
     quantityInStock: number
 };
 
+export interface PageMetadata {
+    number: number,
+    numberOfElements: number,
+    size: number,
+    totalElements: number,
+    totalPages: number
+}
+
 export interface PagedProducts {
     content: Product[],
     number: number,
     numberOfElements: number,
     size: number,
-    totalElement: number,
+    totalElements: number,
     totalPages: number
-}
+};
 
 export interface ProductFilterOptions {
     types: string[],
     brands: string[]
-}
+};
 
 export interface ProductSearchParams {
     page: number,
@@ -30,13 +38,13 @@ export interface ProductSearchParams {
     productName? : string,
     types? : string[],
     brands? : string[]
-}
+};
 
 export interface ProductSearchBodyParams {
     productName? : string,
     types? : string[],
     brands? : string[]
-}
+};
 
 export function toProductSearchBodyPams(productParams: ProductSearchParams) : ProductSearchBodyParams {
     return {
