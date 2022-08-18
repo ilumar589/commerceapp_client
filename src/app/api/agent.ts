@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
+import { ProductSearchBodyParams, ProductSearchParams } from '../models/product';
 
 axios.defaults.baseURL = 'http://localhost:8080/commerce/api/';
 axios.defaults.withCredentials = true;
@@ -24,15 +25,16 @@ axios.interceptors.response.use(response => {
 const responseBody = (response: AxiosResponse) => response.data;
 
 const requests = {
-    get: (url: string) => axios.get(url).then(responseBody),
-    post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
+    get: (url: string, params?: URLSearchParams) => axios.get(url, {params}).then(responseBody),
+    post: (url: string, body: {}, params?: URLSearchParams) => axios.post(url, body, {params}).then(responseBody),
     put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
     delete: (url: string) => axios.delete(url).then(responseBody),
 };
 
 const Catalog = {
-    list: () => requests.post('catalog/products',{}),
-    details: (id: string) => requests.get(`catalog/product/${id}`)
+    list: (filter: any, params: URLSearchParams) => requests.post('catalog/products', filter, params),
+    details: (id: string) => requests.get(`catalog/product/${id}`),
+    filters: () => requests.get('catalog/products/filter')
 }
 
 const Basket = {

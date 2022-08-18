@@ -17,3 +17,31 @@ export interface PagedProducts {
     totalElement: number,
     totalPages: number
 }
+
+export interface ProductFilterOptions {
+    types: string[],
+    brands: string[]
+}
+
+export interface ProductSearchParams {
+    page: number,
+    size: number,
+    orderBy: string,
+    productName? : string,
+    types? : string[],
+    brands? : string[]
+}
+
+export interface ProductSearchBodyParams {
+    productName? : string,
+    types? : string[],
+    brands? : string[]
+}
+
+export function toProductSearchBodyPams(productParams: ProductSearchParams) : ProductSearchBodyParams {
+    return {
+        productName: productParams.productName,
+        types: productParams.types,
+        brands: productParams.brands
+    }
+}
