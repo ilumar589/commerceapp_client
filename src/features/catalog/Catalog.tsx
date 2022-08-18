@@ -1,8 +1,11 @@
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, Pagination, Paper, Radio, RadioGroup, TextField, Typography } from "@mui/material";
+import { Box, Grid, Pagination, Paper, Typography } from "@mui/material";
 import { Fragment, useEffect } from "react";
+import CheckBoxButtons from "../../app/components/CheckBoxButtons";
+import RadioButtonGroup from "../../app/components/RadioButtonGroup";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
-import { fetchProductFilterOptionsAsync, fetchProductsAsync, productSelectors } from "./catalogSlice";
+import { fetchProductFilterOptionsAsync, fetchProductsAsync, productSelectors, setProductSearchParams } from "./catalogSlice";
 import ProductList from "./ProductList";
+import ProductSearch from "./ProductSearch";
 
 const sortOptions = [
     { value: 'name', label: 'Alphabetical' },
@@ -13,7 +16,7 @@ const sortOptions = [
 export default function Catalog() {
 
     const products = useAppSelector(productSelectors.selectAll);
-    const { productsLoaded, status, types, brands, filtersLoaded } = useAppSelector(state => state.catalog);
+    const { productsLoaded, status, types, brands, filtersLoaded, productParams } = useAppSelector(state => state.catalog);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -32,40 +35,33 @@ export default function Catalog() {
             <Grid container spacing={4}>
                 <Grid item xs={3}>
                     <Paper sx={{ mb: 2 }}>
-                        <TextField
-                            label="Search products"
-                            variant="outlined"
-                            value=""
-                            fullWidth
-                        />
+                        <ProductSearch />
                     </Paper>
 
                     <Paper sx={{ mb: 2, p: 2 }}>
-                        <FormControl>
-                            <RadioGroup>
-                                {sortOptions.map(({ value, label }) => {
-                                    return <FormControlLabel value={value} control={<Radio />} label={label} key={value} />
-                                })}
-                            </RadioGroup>
-                        </FormControl>
+                        <RadioButtonGroup
+                            selectedValue={productParams.orderBy}
+                            options={sortOptions}
+                            onChange={(e) => dispatch(setProductSearchParams({ orderBy: e.target.value }))}
+                        />
                     </Paper>
 
 
                     {filtersLoaded ?
                         <Fragment>
                             <Paper sx={{ mb: 2, p: 2 }}>
-                                <FormGroup>
-                                    {types.map(type => {
-                                        return <FormControlLabel control={<Checkbox />} label={type} key={type} />
-                                    })}
-                                </FormGroup>
+                                <CheckBoxButtons
+                                    items={brands}
+                                    checked={productParams.brands}
+                                    onChange={(items: string[]) => dispatch(setProductSearchParams({ brands: items }))}
+                                />
                             </Paper>
                             <Paper sx={{ mb: 2, p: 2 }}>
-                                <FormGroup>
-                                    {brands.map(brand => {
-                                        return <FormControlLabel control={<Checkbox />} label={brand} key={brand} />
-                                    })}
-                                </FormGroup>
+                                <CheckBoxButtons
+                                    items={types}
+                                    checked={productParams.types}
+                                    onChange={(items: string[]) => dispatch(setProductSearchParams({ types: items }))}
+                                />
                             </Paper>
                         </Fragment>
                         :

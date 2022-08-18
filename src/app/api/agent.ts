@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
-import { ProductSearchBodyParams, ProductSearchParams } from '../models/product';
 
 axios.defaults.baseURL = 'http://localhost:8080/commerce/api/';
 axios.defaults.withCredentials = true;
