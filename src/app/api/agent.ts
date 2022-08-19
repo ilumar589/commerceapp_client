@@ -31,15 +31,15 @@ const requests = {
 };
 
 const Catalog = {
-    list: (filter: any, params: URLSearchParams) => requests.post('catalog/products', filter, params),
-    details: (id: string) => requests.get(`catalog/product/${id}`),
-    filters: () => requests.get('catalog/products/filter')
+    list: (filter: any, params: URLSearchParams) => requests.post('public/catalog/products', filter, params),
+    details: (id: string) => requests.get(`public/catalog/product/${id}`),
+    filters: () => requests.get('public/catalog/products/filter')
 }
 
 const Basket = {
-    get: () => requests.get('basket'),
-    addItem: (productId: string, quantity: number = 1) => requests.post('basket', { productId, quantity }),
-    removeItem: (productId: string, quantity: number = 1) => requests.delete(`basket/${productId}/${quantity}`),
+    get: () => requests.get('public/basket'),
+    addItem: (productId: string, quantity: number = 1) => requests.post('public/basket', { productId, quantity }),
+    removeItem: (productId: string, quantity: number = 1) => requests.delete(`public/basket/${productId}/${quantity}`),
 }
 
 const agent = {
