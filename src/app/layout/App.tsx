@@ -15,6 +15,8 @@ import agent from '../api/agent';
 import CheckoutPage from '../../features/checkout/CheckoutPage';
 import { useAppDispatch } from '../store/configureStore';
 import { setBasket } from '../../features/basket/basketSlice';
+import Login from '../../features/auth/Login';
+import Register from '../../features/auth/Register';
 
 function App() {
 
@@ -61,6 +63,8 @@ function App() {
             <Route path='/contact' element= { <ContactPage /> } />
             <Route path='/basket' element= { <BasketPage /> } />
             <Route path='/checkout' element= { <CheckoutPage/> } />
+            <Route path='/login' element= { <Login/> } />
+            <Route path='/register' element= { <Register/> } />
           </Routes>
         </Container>
       </ThemeProvider>

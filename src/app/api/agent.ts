@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
+import { LoginRequest, SignUpRequest } from '../models/auth';
 
 axios.defaults.baseURL = 'http://localhost:8080/commerce/api/';
 axios.defaults.withCredentials = true;
@@ -42,9 +43,15 @@ const Basket = {
     removeItem: (productId: string, quantity: number = 1) => requests.delete(`public/basket/${productId}/${quantity}`),
 }
 
+const Auth = {
+    login: (request: LoginRequest) => requests.post('auth/signin', request),
+    register: (request: SignUpRequest) => requests.post('auth/signup', request)
+}
+
 const agent = {
     Catalog,
-    Basket
+    Basket,
+    Auth
 };
 
 export default agent;
