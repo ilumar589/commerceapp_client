@@ -13,6 +13,9 @@ axios.interceptors.response.use(response => {
         case 400:
             toast.error("Bad request");
             break;
+        case 401:
+            toast.error("Unauthorized");
+            break;
         case 500:
             toast.error("Internal Server Error");
             break;
