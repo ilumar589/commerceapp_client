@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import agent from "../../app/api/agent";
 import { JwtResponse, LoginRequest } from "../../app/models/auth";
 import history from '../../index';
@@ -28,12 +28,19 @@ export const signInUser = createAsyncThunk<JwtResponse, LoginRequest>(
 export const fetchCurrentUser = createAsyncThunk<JwtResponse>(
     'auth/fetchCurrentUser',
     async (_, thunkAPI) => {
+        thunkAPI.dispatch(setUser(JSON.parse(localStorage.getItem('user')!)));
         try {
             const jwtResponse = await agent.Auth.currentUser();
             localStorage.setItem('user', JSON.stringify(jwtResponse));
             return jwtResponse;
         } catch(error: any) {
+            console.log(error);
             return thunkAPI.rejectWithValue({error: error.data});
+        }
+    }, 
+    {
+        condition: () => {
+            if(!localStorage.getItem('user')) return false;
         }
     }
 );
@@ -46,16 +53,25 @@ export const authSlice = createSlice({
             state.user = null;
             localStorage.removeItem('user');
             history.push("/");
+        },
+        setUser: (state, action) => {
+            state.user = action.payload;
         }
     },
     extraReducers: (builder => {
+        builder.addCase(fetchCurrentUser.rejected, (state => {
+            state.user = null;
+            localStorage.removeItem('user');
+            toast.error('Session expired - please login again');
+            history.push('/');
+        }));
         builder.addMatcher(isAnyOf(signInUser.fulfilled, fetchCurrentUser.fulfilled), (state, action) => {
             state.user = action.payload;
         });
-        builder.addMatcher(isAnyOf(signInUser.rejected, fetchCurrentUser.rejected), (state, action) => {
+        builder.addMatcher(isAnyOf(signInUser.rejected), (state, action) => {
             console.log(action.payload);
         });
     })
 })
 
-export const {signOut } = authSlice.actions;
+export const { signOut, setUser } = authSlice.actions;

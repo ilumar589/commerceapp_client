@@ -1,28 +1,37 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { LoginRequest, SignUpRequest } from '../models/auth';
+import { store } from '../store/configureStore';
 
 axios.defaults.baseURL = 'http://localhost:8080/commerce/api/';
 axios.defaults.withCredentials = true;
 
+axios.interceptors.request.use(config => {
+    const token = store.getState().auth.user?.token;
+    if (token) config.headers!.Authorization! = `Bearer ${token}`;
+    return config;
+})
+
 axios.interceptors.response.use(response => {
     return response;
 }, (error: AxiosError) => {
-    const {data, status} = error.response!;
-    switch (status) {
-        case 400:
-            toast.error("Bad request");
-            break;
-        case 401:
-            toast.error("Unauthorized");
-            break;
-        case 500:
-            toast.error("Internal Server Error");
-            break;
-        default:
-            break;
-    }
-    return Promise.reject(error.response);
+    if (error.response) {
+        const {data, status} = error.response;
+        switch (status) {
+            case 400:
+                toast.error("Bad request");
+                break;
+            case 401:
+                toast.error("Unauthorized");
+                break;
+            case 500:
+                toast.error("Internal Server Error");
+                break;
+            default:
+                break;
+        }
+        return Promise.reject(error.response);
+    }  
 });
 
 const responseBody = (response: AxiosResponse) => response.data;

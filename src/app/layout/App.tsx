@@ -1,6 +1,6 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { Container } from '@mui/system';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import AboutPage from '../../features/about/AboutPage';
@@ -11,24 +11,30 @@ import HomePage from '../../features/home/HomePage';
 import Header from './Header';
 import 'react-toastify/dist/ReactToastify.css'
 import BasketPage from '../../features/basket/BasketPage';
-import agent from '../api/agent';
 import CheckoutPage from '../../features/checkout/CheckoutPage';
 import { useAppDispatch } from '../store/configureStore';
-import { setBasket } from '../../features/basket/basketSlice';
+import { fetchBasketAsync, setBasket } from '../../features/basket/basketSlice';
 import Login from '../../features/auth/Login';
 import Register from '../../features/auth/Register';
+import { fetchCurrentUser } from '../../features/auth/authSlice';
 
 function App() {
 
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
 
+  const initApp = useCallback(async () =>  {
+    try {
+      await dispatch(fetchCurrentUser());
+      await dispatch(fetchBasketAsync());
+    } catch(error) {
+      console.log(error);
+    }
+  }, [dispatch])
+
   useEffect(() => {
-    agent.Basket.get()
-      .then(basket => dispatch(setBasket(basket)))
-      .catch(error => console.log(error))
-      .finally(() => setLoading(false));
-  }, [dispatch]);
+    initApp().then(() => setLoading(false))
+  }, [initApp]);
 
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const paletteType = darkMode ? 'dark' : 'light';
