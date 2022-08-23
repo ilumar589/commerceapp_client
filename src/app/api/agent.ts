@@ -47,6 +47,7 @@ const Basket = {
 }
 
 const Auth = {
+    currentUser: () => requests.get('user'),
     login: (request: LoginRequest) => requests.post('auth/signin', request),
     register: (request: SignUpRequest) => requests.post('auth/signup', request)
 }

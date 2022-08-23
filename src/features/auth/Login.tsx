@@ -1,6 +1,4 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -8,22 +6,25 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Paper } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { LoginRequest } from '../../app/models/auth';
-import { useState } from 'react';
-import agent from '../../app/api/agent';
+import { Link, useNavigate } from 'react-router-dom';
 import { FieldValues, useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
+import { useAppDispatch } from '../../app/store/configureStore';
+import { signInUser } from './authSlice';
 
 
 export default function Login() {
+
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
     const { register, handleSubmit, formState: { isSubmitting, errors, isValid }} = useForm({
-        mode: 'onChange'
+        mode: 'all'
     });
 
     async function submitForm(data: FieldValues) {
-        await agent.Auth.login({email: data['email'], password: data['password']})
-            .then(jwtResponse => console.log(jwtResponse));
+        await dispatch(signInUser({email: data['email'], password: data['password']}));
+        navigate("/catalog");
     }
 
     return (
