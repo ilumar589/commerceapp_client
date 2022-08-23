@@ -1,7 +1,7 @@
 export interface SignUpRequest {
     email: string,
     password: string,
-    role: string
+    role?: string
 }
 
 export interface LoginRequest {
