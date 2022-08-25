@@ -8,16 +8,15 @@ import Container from '@mui/material/Container';
 import { Alert, AlertTitle, List, ListItem, ListItemText, Paper } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
-import { useAppDispatch } from '../../app/store/configureStore';
 import agent from '../../app/api/agent';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 
 export default function Register() {
 
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
 
     const [validationErrors, setValidationErrors] = useState<any[]>([]);
 
@@ -36,6 +35,10 @@ export default function Register() {
             </Typography>
             <Box component="form" onSubmit={handleSubmit((data: any) =>
                 agent.Auth.register({ email: data['email'], password: data['password'] })
+                    .then(() => {
+                        toast.success('Registration succeful - you can now log in');
+                        navigate('/login');
+                    })
                     .catch((error:any) => setValidationErrors([error?.data?.message!])))} noValidate sx={{ mt: 1 }}>
                 <TextField
                     margin="normal"

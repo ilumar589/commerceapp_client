@@ -17,17 +17,18 @@ import { fetchBasketAsync, setBasket } from '../../features/basket/basketSlice';
 import Login from '../../features/auth/Login';
 import Register from '../../features/auth/Register';
 import { fetchCurrentUser } from '../../features/auth/authSlice';
+import PrivateRoutes from './PrivateRoutes';
 
 function App() {
 
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
 
-  const initApp = useCallback(async () =>  {
+  const initApp = useCallback(async () => {
     try {
       await dispatch(fetchCurrentUser());
       await dispatch(fetchBasketAsync());
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
   }, [dispatch])
@@ -62,15 +63,17 @@ function App() {
         <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
         <Container>
           <Routes>
-            <Route path='/' element= { <HomePage /> } />
-            <Route path='/catalog' element= { <Catalog /> } />
-            <Route path='/catalog/:id' element= { <ProductDetails /> } />
-            <Route path='/about' element= { <AboutPage /> } />
-            <Route path='/contact' element= { <ContactPage /> } />
-            <Route path='/basket' element= { <BasketPage /> } />
-            <Route path='/checkout' element= { <CheckoutPage/> } />
-            <Route path='/login' element= { <Login/> } />
-            <Route path='/register' element= { <Register/> } />
+            <Route path='/' element={<HomePage />} />
+            <Route path='/catalog' element={<Catalog />} />
+            <Route path='/catalog/:id' element={<ProductDetails />} />
+            <Route path='/about' element={<AboutPage />} />
+            <Route path='/contact' element={<ContactPage />} />
+            <Route path='/basket' element={<BasketPage />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+            <Route element={<PrivateRoutes />}>
+              <Route path='/checkout' element={<CheckoutPage />} />
+            </Route>
           </Routes>
         </Container>
       </ThemeProvider>
